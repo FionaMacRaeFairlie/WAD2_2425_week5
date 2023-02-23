@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
 
+app.get('/a', (req, res) => {
+  console.log('/a: route will send the letter a then stop')
+  res.send('a')
+})
 app.get('/b', (req, res, next) => {
   console.log('/b: route not terminated')
   next()

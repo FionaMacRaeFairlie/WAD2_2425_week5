@@ -23,6 +23,11 @@ app.get("/modules/:moduleName", (req, res, next) => {
   });
 });
 
+app.use((req, res) => {
+  console.log('route not handled')
+  res.send('404 - not found')
+})
+
 const port = process.env.PORT || 3000;
 app.listen(port, () =>
   console.log(
