@@ -1,28 +1,29 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
+app.use(express.urlencoded({ extended: false }));
 
-app.get('/a', (req, res) => {
-  console.log('/a: route will send the letter a then stop')
-  res.send('a')
-})
+const mustache = require("mustache-express");
+app.engine("mustache", mustache());
+app.set("view engine", "mustache");
 
-app.get('/b', (req, res, next) => {
-  console.log('/b: route not terminated')
-  next()
-})
-app.use((req, res, next) => {
-  console.log('SOMETIMES')
-  next()
-})
-app.get('/b', (req, res, next) => {
-  console.log('/b (part 2): error thrown' )
-  throw new Error('b failed')
-})
-app.use('/b', (err, req, res, next) => {
-  console.log('/b error detected and passed on')
-  next(err)
-})
+const staff = {
+  Fred: { name: "Fred", bio: "Fred is our European travel expert." },
+  Madeline: { name: "Madeline", bio: "Madeline is our US expert." },
+  Tom: { name: "Tom", bio: "Tom deals with travel to Asia." },
+};
 
-const port = process.env.PORT || 3000
-app.listen(port, () => console.log( `Express started on http://localhost:${port}` +
-  '; press Ctrl-C to terminate.'))
+app.get("/staff/:name", (req, res, next) => {
+  const info = staff[req.params.name];
+  if (!info) return next(); // will eventually fall through to 404
+  res.render("staffPage", {
+    staffInfo: info,
+  });
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () =>
+  console.log(
+    `Express started on http://localhost:${port}` +
+      "; press Ctrl-C to terminate."
+  )
+);
